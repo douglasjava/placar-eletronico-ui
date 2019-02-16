@@ -1,40 +1,46 @@
 import React, { Component } from 'react';
 import './App.css';
+import axios from "axios";
 import PlacarContainer from './components/PlacarContainer'
-
-const dados = {
-  partida: {
-      estadio: "Mineirão/MG",
-      data: "01/06/2016",
-      horario: "19hs",
-  },
-  casa: {
-      nome: "Cruzeiro",
-  },
-  visitante:{
-      nome: "Flamengo",
-  }
-};
 
 export default class App extends React.Component {
 
-    componentDidMount() {
-        this.dados()
-          .then(res => this.setState({ response: res.express }))
-          .catch(err => console.log(err));
-      }
-    
-      dados = async () => {
-        const response = await fetch('http://127.0.0.1:8080/dados');
-        const body = await response.json();
-        if (response.status !== 200) throw Error(body.message);
-        console.log(JSON.stringify(body));
-        return body;
-      };
+constructor(props){
+    super(props);
+    this.state = {
+        dados: [],
+        isloader: false,
+    };
+}
 
-      
+componentDidMount() {
+
+    axios
+      .get('http://127.0.0.1:8080/dados')
+      .then(response => {
+         let dados = response.data;
+         this.setState({
+             isloader: true,
+             dados: dados
+        });
+         //console.log("state", JSON.stringify(this.state.dados[1].partida));
+      }).catch(error => console.log(error));
+  }
+
 
   render(){
-      return <PlacarContainer {...dados} tempo={90} />           
+
+      var {isloader, dados} = this.state;
+
+      if(!isloader){
+          return <div>Loading...</div>
+      } else {
+        return <PlacarContainer casa = {dados[1].casa} 
+                                visitante = {dados[1].visitante} 
+                                partida = {dados[1].partida}  
+                                lista = {dados}                 
+                                tempo={90} />    
+      }
   }
 }
+ 

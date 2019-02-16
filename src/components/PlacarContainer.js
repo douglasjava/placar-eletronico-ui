@@ -5,11 +5,12 @@ import Partida from './Partida';
 
 export default class PlacarContainer extends React.Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             gols_casa: 0,
             gols_visitante: 0,
+            data: {date: new Date()},
         };
     }
     
@@ -27,7 +28,9 @@ export default class PlacarContainer extends React.Component {
 
     render() {
         const { partida, casa, visitante } = this.props;
-        const estilo = {float: "left", "marginRight": "20px"}
+        const { lista } = this.props;
+        const estilo = {float: "left", "marginRight": "20px"};
+        const estilo_1 = {float: "left", "marginRight": "40px"}
         return (
             <div>
                 <div style={estilo}>
@@ -48,6 +51,17 @@ export default class PlacarContainer extends React.Component {
                           marcarGol={this.marcarGolVisitante.bind(this)}/>
                 </div>
                 <div style={{clear: "both"}}></div>
+
+				<div>
+                <h3>Jogos</h3>
+                    {lista.map(i => (
+                        <ol key={i.id}> 
+                            <label>{this.state.date.datatoLocaleTimeString()}</label>
+                            <p><b>Partida: {i.casa.nome} X {i.visitante.nome}</b> - 
+                            <i>{i.partida.estadio}/{i.partida.data}/{i.partida.horario}</i> </p>
+                        </ol>
+                    ))}
+                </div>                
             </div>
         );
     }
